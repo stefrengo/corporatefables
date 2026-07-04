@@ -1,16 +1,15 @@
 // ============================================================
-// CORPORATE FABLES — archivio favole
+// CORPORATE FABLES, archivio favole
 // ============================================================
 // Questo è l'UNICO file da modificare ogni settimana.
 // Aggiungi la nuova favola come PRIMO elemento dell'array FABLES
 // (in cima): comparirà automaticamente sia in homepage (tra le
-// "in evidenza") sia nell'archivio completo in favole.html.
+// favole in evidenza) sia nell'archivio completo in favole.html.
 //
 // Copia questo blocco vuoto, incollalo in cima all'array qui sotto
 // e compila i campi:
 //
 // {
-//   crest: "mole",              // vedi elenco stemmi disponibili sotto
 //   character: "Nome",          // nome del personaggio
 //   role: "il/la animale",      // es. "la volpe"
 //   title: "Titolo della favola",
@@ -20,15 +19,10 @@
 //                                // appena pubblicato. Se lo lasci vuoto, il
 //                                // pulsante porta alla newsletter generale.
 // },
-//
-// Stemmi disponibili in assets/crests.svg:
-// mole, octopus, tapir, snail, monkey, pigeon, mule, raccoon, eagle
-// Se il nuovo animale non è ancora tra questi, dimmelo: te ne disegno uno nuovo.
 // ============================================================
 
 const FABLES = [
   {
-    crest: "mole",
     character: "Duna",
     role: "la talpa",
     title: "La talpa che non alzava mai lo sguardo",
@@ -37,7 +31,6 @@ const FABLES = [
     url: ""
   },
   {
-    crest: "octopus",
     character: "Otto",
     role: "il polpo",
     title: "Il polpo che diceva sempre sì",
@@ -46,7 +39,6 @@ const FABLES = [
     url: ""
   },
   {
-    crest: "tapir",
     character: "Teo",
     role: "il tapiro",
     title: "Il tapiro che convocava riunioni",
@@ -55,7 +47,6 @@ const FABLES = [
     url: ""
   },
   {
-    crest: "snail",
     character: "Lena",
     role: "la lumaca",
     title: "La lumaca che aspettava il momento giusto",
@@ -64,7 +55,6 @@ const FABLES = [
     url: ""
   },
   {
-    crest: "monkey",
     character: "Ada",
     role: "la scimmia",
     title: "La scimmia e la biblioteca perfetta",
@@ -73,7 +63,6 @@ const FABLES = [
     url: ""
   },
   {
-    crest: "pigeon",
     character: "Bernie",
     role: "il piccione",
     title: "Il piccione che non si fermava mai",
@@ -82,7 +71,6 @@ const FABLES = [
     url: ""
   },
   {
-    crest: "mule",
     character: "Aldo",
     role: "il mulo",
     title: "Il mulo che non voleva il nuovo sistema",
@@ -91,7 +79,6 @@ const FABLES = [
     url: ""
   },
   {
-    crest: "raccoon",
     character: "Renoir",
     role: "il procione",
     title: "Il procione guardiano dello stemma",
@@ -100,12 +87,11 @@ const FABLES = [
     url: "https://substack.com/@stefrengo"
   },
   {
-    crest: "eagle",
     character: "Kael",
     role: "l'aquila",
     title: "L'aquila che vedeva tutto",
     moral: "I numeri dicono cosa sta succedendo. Le persone dicono perché.",
-    teaser: "Dalla cima della torre, Kael vede tutto — finché scende tra i corridoi e scopre quanto i numeri non gli avevano mai detto.",
+    teaser: "Dalla cima della torre, Kael vede tutto. Poi scende tra i corridoi e scopre quanto i numeri non gli avevano mai detto.",
     url: ""
   }
 ];

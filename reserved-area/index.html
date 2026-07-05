@@ -1,0 +1,1097 @@
+<style>
+  :root{
+    --ink:#1B2A3A;
+    --parchment:#EDE4D3;
+    --parchment-dark:#E1D5BC;
+    --brass:#A9832E;
+    --brass-light:#C9A24E;
+    --forest:#2F4538;
+    --charcoal:#3A342B;
+    --wax:#7A2E2E;
+    --paper-line: rgba(58,52,43,0.12);
+    --font-display: "Big Caslon","Didot","Iowan Old Style",Georgia,serif;
+    --font-body: "Avenir Next","Century Gothic",Futura,Calibri,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  .cf-root{
+    font-family:var(--font-body);
+    color:var(--charcoal);
+    background:
+      radial-gradient(ellipse at top left, rgba(169,131,46,0.10), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(47,69,56,0.12), transparent 55%),
+      var(--parchment);
+    min-height:100%;
+    padding:32px 16px 48px;
+    position:relative;
+  }
+  .cf-wrap{ max-width:640px; margin:0 auto; position:relative; }
+  .cf-masthead{ text-align:center; margin-bottom:24px; }
+  .cf-logo{ width:64px; height:64px; border-radius:50%; display:block; margin:0 auto 14px; box-shadow:0 0 0 1px rgba(169,131,46,0.35); }
+
+  .cf-tabbar{ display:flex; justify-content:center; gap:4px; margin:22px 0 6px; border-bottom:1px solid var(--paper-line); }
+  .cf-tab{
+    font-family:var(--font-body); font-size:12px; font-weight:600; letter-spacing:0.04em;
+    padding:10px 16px; cursor:pointer; color:var(--charcoal); opacity:0.55;
+    border-bottom:2px solid transparent; transition:opacity .15s, border-color .15s; background:none; border-top:none; border-left:none; border-right:none;
+  }
+  .cf-tab:hover{ opacity:0.85; }
+  .cf-tab.active{ opacity:1; color:var(--ink); border-bottom-color:var(--brass); }
+
+  .cf-eyebrow{
+    font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--forest); font-weight:700; margin-bottom:6px;
+  }
+  .cf-badge-free{
+    display:inline-block; margin-left:8px; padding:2px 8px; border-radius:20px;
+    background:var(--brass-light); color:var(--ink); font-size:10px; font-weight:700;
+    letter-spacing:0.06em; text-transform:uppercase; vertical-align:middle;
+  }
+  .cf-title{ font-family:var(--font-display); font-size:30px; font-weight:600; color:var(--ink); margin:0 0 6px; }
+  .cf-sub{ font-size:14px; opacity:0.75; max-width:460px; margin:0 auto; line-height:1.5; }
+
+  .cf-corridor{ display:flex; justify-content:center; gap:5px; margin:24px 0 20px; flex-wrap:wrap; }
+  .cf-door{ width:16px; height:22px; border-radius:8px 8px 3px 3px; border:1.5px solid var(--paper-line); background:rgba(255,255,255,0.35); transition:all .35s ease; }
+  .cf-door.done{ background:var(--forest); border-color:var(--forest); }
+  .cf-door.current{ background:var(--brass-light); border-color:var(--brass); box-shadow:0 0 0 3px rgba(169,131,46,0.18); }
+
+  .cf-card{
+    background:linear-gradient(180deg, #FBF7EE, var(--parchment-dark));
+    border:1px solid rgba(58,52,43,0.15); border-radius:6px;
+    box-shadow:0 1px 2px rgba(58,52,43,0.06), 0 12px 30px -14px rgba(27,42,58,0.35);
+    padding:34px 30px; position:relative;
+  }
+  .cf-card::before{
+    content:""; position:absolute; left:14px; right:14px; top:8px; bottom:8px;
+    border:1px solid rgba(169,131,46,0.25); border-radius:3px; pointer-events:none;
+  }
+  .cf-qnum{ font-family:var(--font-display); font-size:13px; color:var(--brass); letter-spacing:0.08em; margin-bottom:10px; font-style:italic; }
+  .cf-question{ font-family:var(--font-display); font-size:21px; line-height:1.35; color:var(--ink); margin:0 0 8px; }
+  .cf-hint{ font-size:13px; opacity:0.65; margin-bottom:18px; line-height:1.5; }
+  .cf-optional{ font-size:11px; opacity:0.5; letter-spacing:0.04em; margin-bottom:10px; }
+
+  .cf-input, .cf-textarea{
+    width:100%; font-family:var(--font-body); font-size:15px; padding:12px 14px;
+    border:1.5px solid rgba(58,52,43,0.25); border-radius:4px; background:rgba(255,255,255,0.6);
+    color:var(--ink); outline:none; transition:border-color .2s, background .2s;
+  }
+  .cf-input:focus, .cf-textarea:focus{ border-color:var(--brass); background:#fff; }
+  .cf-textarea{ min-height:90px; resize:vertical; }
+
+  .cf-options{ display:flex; flex-direction:column; gap:8px; }
+  .cf-option{
+    text-align:left; padding:13px 16px; border:1.5px solid rgba(58,52,43,0.22); border-radius:4px;
+    background:rgba(255,255,255,0.45); font-size:14.5px; color:var(--charcoal); cursor:pointer; transition:all .15s ease;
+  }
+  .cf-option:hover{ border-color:var(--brass); background:rgba(255,255,255,0.75); }
+  .cf-option.selected{ border-color:var(--forest); background:rgba(47,69,56,0.10); color:var(--forest); font-weight:600; }
+  .cf-option .cf-tick{ float:right; opacity:0; color:var(--forest); }
+  .cf-option.selected .cf-tick{ opacity:1; }
+
+  .cf-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:24px; }
+  .cf-btn{
+    font-family:var(--font-body); font-size:12.5px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;
+    padding:11px 22px; border-radius:2px; cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .cf-btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .cf-btn-primary{ background:var(--ink); color:var(--parchment); border:1px solid var(--ink); }
+  .cf-btn-primary:not(:disabled):hover{ background:var(--forest); border-color:var(--forest); }
+  .cf-btn-ghost{ background:transparent; color:var(--charcoal); border:1px solid transparent; opacity:0.55; text-transform:none; letter-spacing:0; font-weight:600; }
+  .cf-btn-ghost:hover{ opacity:1; }
+
+  .cf-loading{ text-align:center; padding:56px 20px; }
+  .cf-seal{
+    width:62px; height:62px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #9a4040, var(--wax) 70%);
+    margin:0 auto 18px; display:flex; align-items:center; justify-content:center;
+    color:#f2dede; font-family:var(--font-display); font-size:20px;
+    animation:cf-pulse 1.6s ease-in-out infinite; box-shadow:0 6px 16px rgba(122,46,46,0.35);
+  }
+  @keyframes cf-pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+  .cf-loading-text{ font-family:var(--font-display); font-style:italic; font-size:15px; color:var(--forest); min-height:20px; }
+
+  .cf-result{ animation:cf-unroll .5s ease; }
+  @keyframes cf-unroll{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  .cf-archetype-card{
+    text-align:center; padding:22px 16px 26px; margin-bottom:22px;
+    border-radius:6px; background:rgba(255,255,255,0.5); border:1px solid rgba(169,131,46,0.3);
+  }
+  .cf-archetype-eyebrow{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--brass); font-weight:700; margin-bottom:8px; }
+  .cf-archetype-name{ font-family:var(--font-display); font-size:28px; color:var(--ink); margin:0 0 10px; }
+  .cf-archetype-essence{ font-size:14.5px; line-height:1.6; color:var(--charcoal); max-width:420px; margin:0 auto; }
+
+  .cf-section{ margin-bottom:22px; padding-bottom:20px; border-bottom:1px solid var(--paper-line); }
+  .cf-section:last-child{ border-bottom:none; }
+  .cf-section-label{ font-family:var(--font-display); font-style:italic; font-size:12px; color:var(--brass); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px; }
+
+  .cf-sw-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cf-strength, .cf-weakness{ padding:11px 13px; border-radius:4px; font-size:13.5px; line-height:1.5; }
+  .cf-strength{ background:rgba(47,69,56,0.08); color:var(--forest); }
+  .cf-weakness{ background:rgba(122,46,46,0.07); color:var(--wax); }
+  .cf-strength b, .cf-weakness b{ display:block; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:3px; opacity:0.75; }
+
+  .cf-verdict{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .cf-verdict-pill{ font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; padding:5px 12px; border-radius:20px; }
+  .cf-verdict-good{ background:rgba(47,69,56,0.15); color:var(--forest); }
+  .cf-verdict-partial{ background:rgba(169,131,46,0.2); color:#7a5c1c; }
+  .cf-verdict-bad{ background:rgba(122,46,46,0.13); color:var(--wax); }
+  .cf-verdict-text{ font-size:14px; line-height:1.55; }
+
+  .cf-ai-box{
+    margin-top:10px; padding:14px 16px; border-radius:4px;
+    background:rgba(27,42,58,0.05); border:1px dashed rgba(27,42,58,0.25);
+    font-size:13px; line-height:1.55;
+  }
+  .cf-ai-box b{ color:var(--ink); }
+  .cf-ai-tag{ font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); font-weight:700; margin-bottom:6px; display:block; }
+
+  .cf-upsell{ margin-top:8px; padding:22px 20px; border-radius:6px; background:var(--ink); color:#F0E9D8; text-align:center; }
+  .cf-upsell-title{ font-family:var(--font-display); font-size:17px; margin-bottom:8px; }
+  .cf-upsell-text{ font-size:12.5px; opacity:0.75; line-height:1.6; margin-bottom:16px; }
+  .cf-upsell-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  .cf-product-tile-light{
+    background:rgba(255,255,255,0.5); border:1.5px solid rgba(58,52,43,0.2); border-radius:4px;
+    padding:14px; font-size:13px; cursor:pointer; transition:all .15s ease;
+  }
+  .cf-product-tile-light:hover{ border-color:var(--brass); background:rgba(255,255,255,0.85); }
+  .cf-product-tile-light.owned{ border-color:var(--forest); background:rgba(47,69,56,0.08); }
+  .cf-product-status-light{ font-size:11px; opacity:0.6; margin-top:5px; }
+  .cf-product-tile-light.owned .cf-product-status-light{ opacity:1; color:var(--forest); font-weight:700; }
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px;
+    padding:12px 10px; font-size:12px; cursor:pointer; transition:all .15s ease;
+  }
+  .cf-product-tile:hover{ background:rgba(255,255,255,0.16); }
+  .cf-product-tile.owned{ background:rgba(169,131,46,0.25); border-color:var(--brass-light); }
+  .cf-product-status{ font-size:10.5px; opacity:0.7; margin-top:4px; }
+  .cf-product-tile.owned .cf-product-status{ opacity:1; color:var(--brass-light); font-weight:700; }
+  .cf-email-row{ display:flex; gap:8px; margin-top:6px; }
+  .cf-email-input{ flex:1; padding:10px 12px; border-radius:4px; border:none; font-size:13px; }
+  .cf-upsell-btn{ background:var(--brass-light); color:var(--ink); border:none; padding:10px 18px; border-radius:4px; font-weight:700; font-size:13px; cursor:pointer; white-space:nowrap; }
+  .cf-fine-print{ font-size:10.5px; opacity:0.55; margin-top:10px; line-height:1.5; }
+
+  .cf-profile-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:rgba(27,42,58,0.06); border:1px solid rgba(27,42,58,0.14);
+    border-radius:6px; padding:10px 14px; margin-bottom:16px; font-size:12.5px;
+  }
+  .cf-profile-bar b{ color:var(--ink); }
+  .cf-profile-bar-actions{ display:flex; gap:12px; }
+  .cf-profile-bar-actions a{ color:var(--forest); font-weight:600; cursor:pointer; text-decoration:underline; }
+
+  .cf-entity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .cf-entity-card{
+    padding:20px 14px; text-align:center; border-radius:6px; cursor:pointer;
+    border:1.5px solid rgba(58,52,43,0.22); background:rgba(255,255,255,0.45); transition:all .15s ease;
+  }
+  .cf-entity-card:hover{ border-color:var(--brass); background:rgba(255,255,255,0.8); transform:translateY(-1px); }
+  .cf-entity-icon{ font-size:28px; margin-bottom:6px; }
+  .cf-entity-label{ font-family:var(--font-display); font-size:16px; color:var(--ink); margin-bottom:6px; }
+  .cf-entity-status{ font-size:11.5px; opacity:0.65; line-height:1.4; }
+
+  .cf-restart{ background:none; border:none; font-size:12px; opacity:0.6; cursor:pointer; text-decoration:underline; }
+  .cf-restart-row{ display:flex; justify-content:center; gap:18px; margin-top:16px; }
+
+
+  @media (max-width:480px){
+    .cf-card{ padding:26px 18px; }
+    .cf-title{ font-size:24px; }
+    .cf-question{ font-size:18px; }
+    .cf-sw-grid, .cf-upsell-grid{ grid-template-columns:1fr; }
+    .cf-email-row{ flex-direction:column; }
+  }
+</style>
+
+<div class="cf-root">
+  <div class="cf-wrap">
+    <div class="cf-masthead">
+      <img class="cf-logo" src="data:image/jpeg;base64,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" alt="Corporate Fables" />
+      <div class="cf-eyebrow" id="cf-page-eyebrow">Corporate Fables</div>
+      <h1 class="cf-title" id="cf-page-title">L'Analizzatore del Tono</h1>
+      <p class="cf-sub" id="cf-page-sub">Dieci domande, un archetipo, e un primo giudizio su quanto il vostro modo di parlare sia coerente con quello che state cercando di ottenere.</p>
+    </div>
+    <div id="cf-tabbar"></div>
+    <div id="cf-profile-bar"></div>
+    <div class="cf-corridor" id="cf-corridor"></div>
+    <div id="cf-app"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  const COMPANY_SECTORS = ["Tech / software","Manifatturiero","Servizi professionali","Retail / commercio","Sanità / benessere","Altro"];
+  const COMPANY_GOALS = [
+    "Attrarre nuovi talenti",
+    "Trattenere le persone e ridurre il turnover",
+    "Rafforzare la coesione interna dopo un cambiamento",
+    "Crescere restando coerenti",
+    "Migliorare la reputazione esterna"
+  ];
+  const PERSONAL_FIELDS = ["Comunicazione interna / HR / Employer branding","Tech / prodotto","Consulenza / servizi professionali","Creator / educator indipendente","Altro"];
+  const PERSONAL_GOALS = [
+    "Diventare un punto di riferimento nel tuo settore",
+    "Trovare nuove opportunità professionali",
+    "Costruire una community intorno ai tuoi contenuti",
+    "Sostenere il lancio di un progetto personale (libro, corso, attività)",
+    "Essere preso sul serio quando condividi idee scomode"
+  ];
+
+  const QUESTIONS_COMPANY = [
+    { id:"company_name", type:"text", q:"Come si chiama la tua azienda?", placeholder:"Es. Bottega Chiara Srl", required:true },
+    { id:"sector", type:"select", q:"In che settore lavorate?", options:COMPANY_SECTORS, required:true },
+    { id:"company_goal", type:"select", q:"Qual è l'obiettivo più importante per l'azienda nei prossimi 12 mesi?", options:COMPANY_GOALS, required:true },
+    { id:"goal_detail", type:"text", textarea:true, q:"Vuoi aggiungere un dettaglio su questo obiettivo?", hint:"Facoltativo.", placeholder:"Es. vogliamo assumere 10 profili tech entro l'estate", required:false },
+    { id:"tone_formality", type:"select", q:"Il modo in cui parlate ai dipendenti, oggi, è più...", hint:"Non come vorreste che fosse. Come è davvero, oggi.", options:["Istituzionale","Un misto dei due","Informale"], required:true },
+    { id:"tone_directness", type:"select", q:"Nei momenti delicati, il tono è più...", options:["Diplomatico","Dipende dal caso","Diretto"], required:true },
+    { id:"tone_energy", type:"select", q:"L'energia con cui comunicate è più...", options:["Riservata","Cordiale","Espansiva"], required:true },
+    { id:"tone_seriousness", type:"select", q:"Il registro generale è più...", options:["Serio","Equilibrato","Con un po' di ironia"], required:true },
+    { id:"website_url", type:"text", q:"Il sito o la pagina LinkedIn dell'azienda", hint:"Facoltativo. In questo prototipo non viene ancora letto in automatico: nella versione finale userà il contenuto reale del sito.", placeholder:"https://...", required:false },
+    { id:"sample_text", type:"text", textarea:true, q:"Incolla un esempio reale di come comunicate", hint:"Facoltativo, ma è quello che rende l'analisi più precisa: una frase dal sito, un annuncio di lavoro, un messaggio interno.", placeholder:"Es. «Cerchiamo una persona che sappia lavorare in autonomia e...»", required:false }
+  ];
+
+  const QUESTIONS_INDIVIDUAL = [
+    { id:"company_name", type:"text", q:"Come ti chiami, o come firmi i tuoi contenuti?", placeholder:"Es. Stefano Orengo", required:true },
+    { id:"sector", type:"select", q:"In che ambito ti muovi professionalmente?", options:PERSONAL_FIELDS, required:true },
+    { id:"company_goal", type:"select", q:"Qual è l'obiettivo più importante per te nei prossimi 12 mesi?", options:PERSONAL_GOALS, required:true },
+    { id:"goal_detail", type:"text", textarea:true, q:"Vuoi aggiungere un dettaglio su questo obiettivo?", hint:"Facoltativo.", placeholder:"Es. vorrei che il mio libro trovasse un editore entro l'anno", required:false },
+    { id:"tone_formality", type:"select", q:"Il modo in cui scrivi i tuoi contenuti, oggi, è più...", hint:"Non come vorresti che fosse. Come è davvero, oggi.", options:["Istituzionale","Un misto dei due","Informale"], required:true },
+    { id:"tone_directness", type:"select", q:"Nei momenti in cui dici qualcosa di scomodo, il tono è più...", options:["Diplomatico","Dipende dal caso","Diretto"], required:true },
+    { id:"tone_energy", type:"select", q:"L'energia con cui scrivi è più...", options:["Riservata","Cordiale","Espansiva"], required:true },
+    { id:"tone_seriousness", type:"select", q:"Il registro generale è più...", options:["Serio","Equilibrato","Con un po' di ironia"], required:true },
+    { id:"website_url", type:"text", q:"Il tuo profilo LinkedIn o la tua newsletter", hint:"Facoltativo. In questo prototipo non viene ancora letto in automatico: nella versione finale userà i tuoi contenuti reali.", placeholder:"https://linkedin.com/in/...", required:false },
+    { id:"sample_text", type:"text", textarea:true, q:"Incolla un tuo post o messaggio scritto di recente", hint:"Facoltativo, ma è quello che rende l'analisi più precisa.", placeholder:"Es. l'apertura di un tuo ultimo post LinkedIn", required:false }
+  ];
+
+  let QUESTIONS = QUESTIONS_COMPANY;
+  let currentEntityType = "azienda";
+
+  // --- Configurazione EmailJS ---
+  // Compila questi tre valori quando avrai creato account, servizio e template su emailjs.com.
+  // Finché sono vuoti, l'invio viene solo simulato in console, senza bloccare l'esperienza.
+  const EMAILJS_CONFIG = {
+    serviceId: "",       // Email Services → il tuo servizio
+    templateIdLead: "",  // Template per avvisare TE di un nuovo lead
+    templateIdConfirm: "", // Template di conferma inviato al registrante (GDPR)
+    publicKey: ""         // Account → General → Public Key
+  };
+
+  async function sendEmail(templateId, params){
+    if (!EMAILJS_CONFIG.serviceId || !templateId || !EMAILJS_CONFIG.publicKey) {
+      console.log("EmailJS non configurato: invio simulato.", { templateId, params });
+      return false;
+    }
+    try {
+      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id: EMAILJS_CONFIG.serviceId,
+          template_id: templateId,
+          user_id: EMAILJS_CONFIG.publicKey,
+          template_params: params
+        })
+      });
+      return res.ok;
+    } catch (e) {
+      console.error("Invio email non riuscito:", e);
+      return false;
+    }
+  }
+
+  const LOADING_LINES = [
+    "Il messaggero sta preparando la pergamena…",
+    "Si sta scaldando la cera per il sigillo…",
+    "Le parole stanno prendendo la forma giusta…",
+    "Quasi pronto: ultima rilettura al lume di candela…"
+  ];
+
+  let phase = "intro";
+  let step = 0;
+  const answers = {};
+
+  const app = document.getElementById("cf-app");
+  const corridor = document.getElementById("cf-corridor");
+  const profileBar = document.getElementById("cf-profile-bar");
+
+  function profileKey(type){ return "tone-profile-" + type; }
+
+  async function loadProfile(type){
+    try {
+      const res = await window.storage.get(profileKey(type));
+      return res ? JSON.parse(res.value) : null;
+    } catch (e) {
+      return null; // nessun profilo salvato, o storage non disponibile
+    }
+  }
+  async function saveProfile(type, data){
+    try {
+      await window.storage.set(profileKey(type), JSON.stringify(data));
+      return true;
+    } catch (e) {
+      console.error("Impossibile salvare il profilo:", e);
+      return false;
+    }
+  }
+  async function deleteProfile(type){
+    try { await window.storage.delete(profileKey(type)); } catch (e) { /* già assente */ }
+  }
+
+  let currentProfile = null;
+  let companyProfile = null;
+  let individualProfile = null;
+  let activeTab = "tono";
+
+  function anyRegistered(){
+    return !!(companyProfile && companyProfile.registered) || !!(individualProfile && individualProfile.registered);
+  }
+
+  const TABS = [
+    { id:"dashboard", label:"Dashboard" },
+    { id:"tono", label:"Tono di voce" },
+    { id:"kits", label:"I miei kit" },
+    { id:"account", label:"Account" }
+  ];
+
+  function renderTabBar(){
+    const bar = document.getElementById("cf-tabbar");
+    if (!anyRegistered()) { bar.innerHTML = ""; return; }
+    bar.innerHTML = `<div class="cf-tabbar">${TABS.map(t =>
+      `<button class="cf-tab${activeTab===t.id?' active':''}" data-tab="${t.id}">${t.label}</button>`
+    ).join("")}</div>`;
+    bar.querySelectorAll(".cf-tab").forEach(b => {
+      b.addEventListener("click", () => goToTab(b.dataset.tab));
+    });
+  }
+
+  function goToTab(tab){
+    activeTab = tab;
+    if (tab === "dashboard") renderDashboard();
+    else if (tab === "tono") renderHub();
+    else if (tab === "kits") renderKitsTab();
+    else if (tab === "account") renderAccountTab();
+  }
+
+  function setPageHeader(eyebrow, title, sub){
+    document.getElementById("cf-page-eyebrow").textContent = eyebrow;
+    document.getElementById("cf-page-title").textContent = title;
+    document.getElementById("cf-page-sub").textContent = sub;
+  }
+
+  function renderProfileBar(){
+    renderTabBar();
+    if (!currentProfile) { profileBar.innerHTML = ""; return; }
+    const name = currentProfile.answers.company_name || "profilo";
+    const arch = currentProfile.archetype ? currentProfile.archetype.name : "";
+    const typeLabel = currentEntityType === "individuo" ? "Individuo" : "Azienda";
+    profileBar.innerHTML = `<div class="cf-profile-bar">
+      <div>Profilo (${typeLabel}) salvato: <b>${name}</b>${arch ? ` · ${arch}` : ""}</div>
+      <div class="cf-profile-bar-actions">
+        <a id="cf-bar-view">Vedi analisi</a>
+        <a id="cf-bar-delete">Elimina</a>
+        <a id="cf-bar-home">Cambia profilo</a>
+      </div>
+    </div>`;
+    const viewBtn = document.getElementById("cf-bar-view");
+    const delBtn = document.getElementById("cf-bar-delete");
+    const homeBtn = document.getElementById("cf-bar-home");
+    if (viewBtn) viewBtn.addEventListener("click", () => { activeTab = "tono"; renderResult(currentProfile); });
+    if (delBtn) delBtn.addEventListener("click", async () => {
+      if (!confirm("Eliminare il profilo salvato? Non è recuperabile.")) return;
+      await deleteProfile(currentEntityType);
+      if (currentEntityType === "individuo") individualProfile = null; else companyProfile = null;
+      currentProfile = null;
+      Object.keys(answers).forEach(k => delete answers[k]);
+      activeTab = anyRegistered() ? activeTab : "tono";
+      renderProfileBar();
+      renderHub();
+    });
+    if (homeBtn) homeBtn.addEventListener("click", () => { currentProfile = null; activeTab = "tono"; renderProfileBar(); renderHub(); });
+  }
+
+  function entityCardHtml(type, icon, label, profile){
+    const status = profile
+      ? `Salvato: <b>${profile.answers.company_name}</b> · ${profile.archetype.name}`
+      : `Nessuna analisi ancora`;
+    return `<div class="cf-entity-card" data-type="${type}">
+      <div class="cf-entity-icon">${icon}</div>
+      <div class="cf-entity-label">${label}</div>
+      <div class="cf-entity-status">${status}</div>
+    </div>`;
+  }
+
+  function renderHub(){
+    activeTab = "tono";
+    renderTabBar();
+    setPageHeader("Corporate Fables", "Il tono di voce", "Scegli quale profilo vuoi analizzare o rivedere.");
+    profileBar.innerHTML = "";
+    corridor.innerHTML = "";
+    app.innerHTML = `<div class="cf-card">
+      <div class="cf-qnum">Prima di iniziare</div>
+      <h2 class="cf-question">Stai compilando come azienda o come singola persona?</h2>
+      <p class="cf-hint" style="font-size:14px;line-height:1.6;margin-bottom:22px;">
+        Le domande cambiano leggermente: un'azienda ha un tono collettivo da mettere a fuoco, una persona costruisce un tono personale, per LinkedIn, una newsletter o un progetto.
+      </p>
+      <div class="cf-entity-grid">
+        ${entityCardHtml("azienda", "🏰", "Azienda", companyProfile)}
+        ${entityCardHtml("individuo", "🦊", "Individuo · Personal branding", individualProfile)}
+      </div>
+    </div>`;
+    document.querySelectorAll(".cf-entity-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const type = card.dataset.type;
+        currentEntityType = type;
+        QUESTIONS = type === "individuo" ? QUESTIONS_INDIVIDUAL : QUESTIONS_COMPANY;
+        const existing = type === "individuo" ? individualProfile : companyProfile;
+        currentProfile = existing;
+        if (existing && existing.registered) {
+          renderProfileBar();
+          renderWelcomeBack(existing);
+        } else if (existing) {
+          renderGate(existing);
+        } else {
+          Object.keys(answers).forEach(k => delete answers[k]);
+          phase = "intro";
+          renderIntro();
+        }
+      });
+    });
+  }
+
+  function renderWelcomeBack(profile){
+    activeTab = "tono";
+    renderTabBar();
+    corridor.innerHTML = "";
+    const savedDate = profile.savedAt ? new Date(profile.savedAt).toLocaleDateString("it-IT", { day:"numeric", month:"long", year:"numeric" }) : "poco fa";
+    app.innerHTML = `<div class="cf-card">
+      <div class="cf-qnum">Bentornato</div>
+      <h2 class="cf-question">Il profilo di ${profile.answers.company_name} è già salvato</h2>
+      <p class="cf-hint" style="font-size:14px;line-height:1.6;">
+        Ultima analisi: ${savedDate}. Archetipo attuale: <b>${profile.archetype.name}</b>.
+        Puoi rivederla, aggiornarla se qualcosa è cambiato, o ripartire da zero.
+      </p>
+      <div class="cf-nav">
+        <button class="cf-btn cf-btn-ghost" id="cf-edit">Modifica e rianalizza</button>
+        <button class="cf-btn cf-btn-primary" id="cf-view">Vedi la mia analisi →</button>
+      </div>
+      <div class="cf-restart-row">
+        <button class="cf-restart" id="cf-fresh">Inizia un profilo nuovo, da zero</button>
+        <button class="cf-restart" id="cf-back-hub">← Cambia tipo di profilo</button>
+      </div>
+    </div>`;
+    document.getElementById("cf-view").addEventListener("click", () => renderResult(profile));
+    document.getElementById("cf-edit").addEventListener("click", () => {
+      Object.assign(answers, profile.answers);
+      phase = "quiz"; step = 0; renderQuestion();
+    });
+    document.getElementById("cf-fresh").addEventListener("click", async () => {
+      if (!confirm("Il profilo salvato verrà sostituito alla prossima analisi. Continuare?")) return;
+      Object.keys(answers).forEach(k => delete answers[k]);
+      phase = "intro"; renderIntro();
+    });
+    document.getElementById("cf-back-hub").addEventListener("click", () => { currentProfile = null; activeTab = "tono"; renderProfileBar(); renderHub(); });
+  }
+
+  function renderIntro(){
+    renderProfileBar();
+    corridor.innerHTML = "";
+    app.innerHTML = `<div class="cf-card">
+      <div class="cf-qnum">Prima di iniziare</div>
+      <h2 class="cf-question">Il tono ha un prezzo, se è quello sbagliato</h2>
+      <p class="cf-hint" style="font-size:14px;line-height:1.6;margin-bottom:24px;">
+        Non esiste un tono di voce giusto in assoluto: esiste un tono coerente con quello che l'azienda sta cercando di ottenere.
+        Rispondi a ${QUESTIONS.length} domande veloci: ti restituiamo un archetipo, i suoi punti di forza e di debolezza,
+        e un primo giudizio su quanto il vostro tono sia allineato con il vostro obiettivo dichiarato.
+      </p>
+      <div class="cf-nav" style="justify-content:flex-end;">
+        <button class="cf-btn cf-btn-primary" id="cf-start">Scopri il tuo archetipo →</button>
+      </div>
+    </div>`;
+    document.getElementById("cf-start").addEventListener("click", () => {
+      phase = "quiz"; step = 0; renderQuestion();
+    });
+  }
+
+  function renderCorridor(){
+    renderProfileBar();
+    corridor.innerHTML = "";
+    QUESTIONS.forEach((_, i) => {
+      const d = document.createElement("div");
+      d.className = "cf-door" + (i < step ? " done" : i === step ? " current" : "");
+      corridor.appendChild(d);
+    });
+  }
+
+  function isAnswered(q){
+    const v = answers[q.id];
+    if (!q.required) return true;
+    return typeof v === "string" && v.trim().length > 0;
+  }
+
+  function renderQuestion(){
+    renderCorridor();
+    const q = QUESTIONS[step];
+    let inner = "";
+    inner += `<div class="cf-qnum">Domanda ${step+1} di ${QUESTIONS.length}</div>`;
+    inner += `<h2 class="cf-question">${q.q}</h2>`;
+    if (!q.required) inner += `<p class="cf-optional">Facoltativa</p>`;
+    if (q.hint) inner += `<p class="cf-hint">${q.hint}</p>`;
+
+    if (q.type === "text") {
+      const val = answers[q.id] || "";
+      if (q.textarea) {
+        inner += `<textarea class="cf-textarea" id="cf-field" placeholder="${q.placeholder||''}">${val}</textarea>`;
+      } else {
+        inner += `<input class="cf-input" id="cf-field" type="text" placeholder="${q.placeholder||''}" value="${val.replace(/"/g,'&quot;')}" />`;
+      }
+    } else if (q.type === "select") {
+      const val = answers[q.id] || "";
+      inner += `<div class="cf-options" id="cf-field">`;
+      q.options.forEach(opt => {
+        inner += `<div class="cf-option${val===opt?' selected':''}" data-val="${opt}">${opt}<span class="cf-tick">✓</span></div>`;
+      });
+      inner += `</div>`;
+    }
+
+    inner += `<div class="cf-nav">
+      <button class="cf-btn cf-btn-ghost" id="cf-back" ${step===0?'disabled':''}>← Indietro</button>
+      <button class="cf-btn cf-btn-primary" id="cf-next">${step===QUESTIONS.length-1 ? 'Genera il mio profilo →' : 'Avanti →'}</button>
+    </div>`;
+
+    app.innerHTML = `<div class="cf-card">${inner}</div>`;
+    wireEvents(q);
+  }
+
+  function wireEvents(q){
+    if (q.type === "text") {
+      document.getElementById("cf-field").addEventListener("input", e => { answers[q.id] = e.target.value; });
+    } else if (q.type === "select") {
+      document.querySelectorAll("#cf-field .cf-option").forEach(el => {
+        el.addEventListener("click", () => { answers[q.id] = el.dataset.val; renderQuestion(); });
+      });
+    }
+    document.getElementById("cf-back").addEventListener("click", () => { if (step > 0) { step--; renderQuestion(); } });
+    document.getElementById("cf-next").addEventListener("click", () => {
+      if (!isAnswered(q)) return;
+      if (step < QUESTIONS.length - 1) { step++; renderQuestion(); }
+      else { runAnalysis(); }
+    });
+  }
+
+  // --- Bestiario del tono ---
+
+  const ARCHETYPE_GRID = {
+    "Istituzionale": {
+      "Riservata": { name:"Il Gufo", essence:"Poche parole, sempre pesate. Non cerca applausi: cerca di essere preciso, anche a costo di sembrare distante." },
+      "Cordiale": { name:"La Cicogna", essence:"Formale ma calda: sa mettere a proprio agio anche quando comunica cose importanti." },
+      "Espansiva": { name:"Il Leone", essence:"Autorevole e magnetico: parla come chi è abituato al palco, e vuole che si senta." }
+    },
+    "Un misto dei due": {
+      "Riservata": { name:"La Tartaruga", essence:"Non si sbilancia mai troppo, ma quello che dice è affidabile e resta." },
+      "Cordiale": { name:"Il Cervo", essence:"Il tono \u00abgiusto\u00bb da manuale: equilibrato, accogliente, raramente fuori posto." },
+      "Espansiva": { name:"Il Delfino", essence:"Equilibrato ma vivace: gioca con le parole, e sa tornare serio quando serve." }
+    },
+    "Informale": {
+      "Riservata": { name:"Il Riccio", essence:"Informale ma con le sue difese: essenziale, non ama i convenevoli né i giri di parole." },
+      "Cordiale": { name:"Il Volpino", essence:"Informale, caldo, complice: parla come un amico esperto che sa sempre cosa dire." },
+      "Espansiva": { name:"Il Pappagallo", essence:"Informale ed energico: ama stupire, far ridere, e farsi ricordare a ogni costo." }
+    }
+  };
+
+  const DIRECTNESS_FLAVOR = {
+    "Diplomatico": "Nei momenti delicati preferisce smussare gli angoli, anche a costo di essere un po' meno chiaro.",
+    "Dipende dal caso": "Sa quando essere diretto e quando addolcire il messaggio: non ha una regola fissa, e questo è un pregio se resta consapevole.",
+    "Diretto": "Nei momenti delicati non gira intorno alle cose: dice quello che c'è da dire, anche quando scomoda."
+  };
+  const SERIOUSNESS_FLAVOR = {
+    "Serio": "Il registro resta serio anche fuori dai momenti critici: raramente si concede leggerezza.",
+    "Equilibrato": "Sa essere serio quando serve e più leggero quando può permetterselo.",
+    "Con un po' di ironia": "Non prende mai troppo sul serio le formalità, nemmeno nei momenti importanti."
+  };
+
+  // --- Punti di forza e debolezza per asse ---
+
+  const AXIS_SW = {
+    formality: {
+      "Istituzionale": { strength:"Trasmette autorevolezza e credibilità istituzionale", weakness:"Rischia di sembrare distante nei momenti in cui servirebbe umanità" },
+      "Informale": { strength:"Crea vicinanza immediata con chi legge", weakness:"Può risultare poco autorevole con interlocutori molto formali (media, investitori, enti)" }
+    },
+    energy: {
+      "Riservata": { strength:"Trasmette sobrietà e misura, rassicura chi cerca stabilità", weakness:"Rischia di passare inosservata, proprio quando servirebbe farsi notare" },
+      "Espansiva": { strength:"È memorabile e crea engagement immediato", weakness:"Può stancare o sembrare eccessiva nei momenti seri" }
+    },
+    directness: {
+      "Diplomatico": { strength:"Protegge le relazioni e ammortizza i messaggi delicati", weakness:"Rischia di annacquare messaggi che dovrebbero restare chiari" },
+      "Diretto": { strength:"È chiaro e permette decisioni rapide", weakness:"Può sembrare brusco se non accompagnato da tatto nei momenti fragili" }
+    },
+    seriousness: {
+      "Serio": { strength:"Trasmette affidabilità e controllo", weakness:"Rischia rigidità, con poco spazio per l'umanità" },
+      "Con un po' di ironia": { strength:"Costruisce relazione e allenta la tensione", weakness:"Rischia di non essere presa sul serio nei momenti critici" }
+    }
+  };
+
+  function buildStrengthsWeaknesses(a){
+    const axes = [
+      { key:"formality", val:a.tone_formality },
+      { key:"energy", val:a.tone_energy },
+      { key:"directness", val:a.tone_directness },
+      { key:"seriousness", val:a.tone_seriousness }
+    ];
+    const picked = axes.filter(x => AXIS_SW[x.key] && AXIS_SW[x.key][x.val]).slice(0, 2);
+    if (!picked.length) {
+      return [{ strength:"Il tono è bilanciato su tutti gli assi", weakness:"La sfida, con un tono così equilibrato, è restare distintivo e riconoscibile" }];
+    }
+    return picked.map(x => AXIS_SW[x.key][x.val]);
+  }
+
+  // --- Coerenza con l'obiettivo dichiarato ---
+
+  function assessGoalFit(a){
+    if (a.entity_type === "individuo") return assessGoalFitIndividual(a);
+    return assessGoalFitCompany(a);
+  }
+
+  function assessGoalFitCompany(a){
+    const f = a.tone_formality, e = a.tone_energy, d = a.tone_directness;
+    let verdict = "buono", text = "";
+
+    if (a.company_goal === "Attrarre nuovi talenti") {
+      if (e === "Riservata") { verdict="bad"; text="Un tono riservato fatica a farsi notare in un mercato del lavoro competitivo: chi cerca talenti di solito ha bisogno di energia percepibile, non solo di correttezza formale."; }
+      else if (f === "Istituzionale" && e === "Cordiale") { verdict="partial"; text="La base è solida, ma per attrarre attivamente potrebbe servire più energia riconoscibile: la cordialità istituzionale rassicura, non sempre convince a candidarsi."; }
+      else { verdict="good"; text="Energia e vicinanza sono proprio quello che oggi fa la differenza per farsi notare da chi sta scegliendo dove candidarsi."; }
+    } else if (a.company_goal === "Trattenere le persone e ridurre il turnover") {
+      if (e === "Riservata") { verdict="bad"; text="Un tono poco caloroso rende più difficile costruire il senso di appartenenza che, di solito, è il primo motivo per cui le persone restano."; }
+      else if (e === "Espansiva" && d === "Diplomatico") { verdict="partial"; text="Energia alta ma poca schiettezza nei momenti delicati: rischia di sembrare entusiasmo di facciata quando serve invece chiarezza vera."; }
+      else { verdict="good"; text="Il calore percepito nel tono è uno dei fattori più legati al senso di appartenenza, e quindi alla permanenza delle persone."; }
+    } else if (a.company_goal === "Rafforzare la coesione interna dopo un cambiamento") {
+      if (d === "Diplomatico") { verdict="bad"; text="Nei momenti di cambiamento l'ambiguità è il terreno ideale per le voci di corridoio: un tono troppo diplomatico rischia di alimentarle invece di ridurle."; }
+      else if (e === "Riservata") { verdict="partial"; text="La chiarezza c'è, ma un tono più caldo aiuterebbe le persone a sentirsi accompagnate, non solo informate, in un momento fragile."; }
+      else { verdict="good"; text="Chiarezza e calore insieme sono esattamente ciò che serve per ricostruire fiducia dopo un cambiamento."; }
+    } else if (a.company_goal === "Crescere restando coerenti") {
+      if (f === "Informale" && e === "Espansiva") { verdict="partial"; text="Il tono funziona benissimo alla dimensione attuale: la domanda da farsi è se reggerà anche quando l'azienda sarà più grande e strutturata."; }
+      else { verdict="good"; text="Non emergono segnali di rischio evidenti: la sfida sarà mantenere questo tono coerente man mano che l'azienda cresce, non cambiarlo."; }
+    } else { // Migliorare la reputazione esterna
+      if (f === "Informale" && e === "Espansiva") { verdict="partial"; text="Un tono molto informale ed espansivo può funzionare benissimo con i dipendenti, ma con interlocutori esterni istituzionali (media, partner, investitori) rischia di sembrare poco credibile."; }
+      else { verdict="good"; text="Il livello di credibilità istituzionale percepita sembra coerente con un obiettivo di reputazione esterna."; }
+    }
+    return { verdict, text };
+  }
+
+  function assessGoalFitIndividual(a){
+    const f = a.tone_formality, e = a.tone_energy, d = a.tone_directness, s = a.tone_seriousness;
+    let verdict = "buono", text = "";
+
+    if (a.company_goal === "Diventare un punto di riferimento nel tuo settore") {
+      if (e === "Riservata") { verdict="bad"; text="Un tono riservato rende più difficile emergere come punto di riferimento: serve energia percepibile, non solo competenza sulla carta."; }
+      else if (d === "Diplomatico") { verdict="partial"; text="L'energia c'è, ma restare sempre diplomatico rende più difficile prendere posizioni riconoscibili: chi diventa un riferimento, prima o poi, si espone."; }
+      else { verdict="good"; text="Energia e chiarezza sono proprio ciò che serve per essere percepiti come un punto di riferimento, non solo come un altro profilo tra tanti."; }
+    } else if (a.company_goal === "Trovare nuove opportunità professionali") {
+      if (f === "Istituzionale" && e === "Riservata") { verdict="bad"; text="Un tono molto istituzionale e riservato rende più difficile farsi notare da chi valuta profili con un punto di vista proprio, non solo un curriculum."; }
+      else if (e === "Riservata") { verdict="partial"; text="Il tono è corretto, ma potrebbe non bastare a farti notare in mezzo a chi comunica con più energia."; }
+      else { verdict="good"; text="Il tono attuale aiuta a farti notare da chi sta valutando nuove collaborazioni, non solo a essere corretto."; }
+    } else if (a.company_goal === "Costruire una community intorno ai tuoi contenuti") {
+      if (e === "Riservata" && s === "Serio") { verdict="bad"; text="È difficile costruire una community con un tono così riservato e serio: la relazione nasce da qualcosa che somiglia a una conversazione, non a un comunicato."; }
+      else if (e === "Riservata") { verdict="partial"; text="Il registro leggero aiuta, ma un'energia più cordiale renderebbe più facile far sentire le persone parte di qualcosa."; }
+      else { verdict="good"; text="Calore ed energia sono la base di ogni community che funziona davvero, non solo che accumula follower."; }
+    } else if (a.company_goal === "Sostenere il lancio di un progetto personale (libro, corso, attività)") {
+      if (d === "Diplomatico") { verdict="bad"; text="Un lancio ha bisogno di un invito chiaro: un tono troppo diplomatico rischia di rendere debole proprio la call to action che dovrebbe convertire l'attenzione in azione."; }
+      else if (e === "Riservata") { verdict="partial"; text="Il messaggio è chiaro, ma un lancio ha bisogno di più visibilità percepita: un tono più espansivo aiuterebbe nel momento decisivo."; }
+      else { verdict="good"; text="Chiarezza ed energia sono esattamente ciò che serve per trasformare l'attenzione dei follower in azione concreta."; }
+    } else { // Essere preso sul serio quando condividi idee scomode
+      if (d === "Diplomatico") { verdict="bad"; text="Le idee scomode hanno bisogno di essere dette con chiarezza: un tono troppo diplomatico rischia di annacquarle fino a renderle innocue, e quindi ignorabili."; }
+      else if (s === "Con un po' di ironia" && f === "Informale") { verdict="partial"; text="L'ironia aiuta a farsi leggere, ma nei momenti in cui vuoi essere preso sul serio potrebbe indebolire la percezione di autorevolezza."; }
+      else { verdict="good"; text="Il tono attuale permette di dire cose scomode restando credibile, che è esattamente il punto di equilibrio più difficile da trovare."; }
+    }
+    return { verdict, text };
+  }
+
+  function seed(a){ return (a.company_name||"azienda"); }
+  function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;} return h; }
+
+  function buildArchetype(a){
+    const grid = ARCHETYPE_GRID[a.tone_formality] || ARCHETYPE_GRID["Un misto dei due"];
+    const base = grid[a.tone_energy] || grid["Cordiale"];
+    const dFlavor = DIRECTNESS_FLAVOR[a.tone_directness] || "";
+    const sFlavor = SERIOUSNESS_FLAVOR[a.tone_seriousness] || "";
+    return {
+      name: base.name,
+      essence: `${base.essence} ${dFlavor} ${sFlavor}`
+    };
+  }
+
+  async function runAnalysis(){
+    renderCorridor();
+    const priorProfile = currentEntityType === "individuo" ? individualProfile : companyProfile;
+    let lineIdx = 0;
+    app.innerHTML = `<div class="cf-card cf-loading">
+      <div class="cf-seal">CF</div>
+      <div class="cf-loading-text" id="cf-loading-text">${LOADING_LINES[0]}</div>
+    </div>`;
+    const lineInterval = setInterval(() => {
+      lineIdx = (lineIdx+1) % LOADING_LINES.length;
+      const el = document.getElementById("cf-loading-text");
+      if (el) el.textContent = LOADING_LINES[lineIdx];
+    }, 550);
+
+    answers.entity_type = currentEntityType;
+    const archetype = buildArchetype(answers);
+    const strengthsWeaknesses = buildStrengthsWeaknesses(answers);
+    const goalFit = assessGoalFit(answers);
+
+    let aiEnrichment = null;
+    const hasSample = answers.sample_text && answers.sample_text.trim().length > 10;
+
+    // Piccola pausa per il ritmo della cera che si scalda; l'analisi di base è già pronta.
+    await new Promise(r => setTimeout(r, 1200));
+
+    if (hasSample) {
+      try {
+        const prompt = `Sei un esperto di comunicazione e cultura organizzativa. Un'azienda del settore "${answers.sector}" dichiara che il proprio tono ha queste caratteristiche: formalità=${answers.tone_formality}, direttezza=${answers.tone_directness}, energia=${answers.tone_energy}, serietà=${answers.tone_seriousness}. Analizza questo estratto reale di come comunicano: "${answers.sample_text.replace(/"/g,"'")}". Rispondi SOLO con un oggetto JSON valido, compatto, senza markdown, senza testo prima o dopo, con questa struttura: {"coerente": "si" | "parzialmente" | "no", "osservazione": "una frase di massimo 25 parole su cosa emerge davvero dal testo rispetto al tono dichiarato", "consiglio": "una frase di massimo 20 parole con un suggerimento pratico"}`;
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 300, messages: [{ role:"user", content: prompt }] })
+        });
+        const data = await response.json();
+        if (!data.error) {
+          const textBlocks = (data.content||[]).filter(b => b.type==="text").map(b=>b.text).join("\n");
+          let clean = textBlocks.replace(/```json|```/g,"").trim();
+          const fb = clean.indexOf("{"), lb = clean.lastIndexOf("}");
+          if (fb > -1 && lb > fb) clean = clean.slice(fb, lb+1);
+          aiEnrichment = JSON.parse(clean);
+        }
+      } catch (err) {
+        console.error("Arricchimento AI non disponibile:", err);
+        aiEnrichment = null;
+      }
+    }
+
+    clearInterval(lineInterval);
+
+    const result = {
+      answers: Object.assign({}, answers, { entity_type: currentEntityType }),
+      archetype, strengthsWeaknesses, goalFit, aiEnrichment, hasSample,
+      savedAt: new Date().toISOString(),
+      registered: !!(priorProfile && priorProfile.registered),
+      registrant: (priorProfile && priorProfile.registrant) || null,
+      purchases: (priorProfile && priorProfile.purchases) || {}
+    };
+
+    await saveProfile(currentEntityType, result);
+    if (currentEntityType === "individuo") individualProfile = result; else companyProfile = result;
+    currentProfile = result;
+
+    if (result.registered) {
+      renderResult(result);
+    } else {
+      renderGate(result);
+    }
+  }
+
+  function renderGate(result){
+    activeTab = "tono";
+    renderTabBar();
+    profileBar.innerHTML = "";
+    corridor.innerHTML = "";
+    const a = result.answers;
+    app.innerHTML = `<div class="cf-card">
+      <div class="cf-archetype-card">
+        <div class="cf-archetype-eyebrow">Il tono di ${a.company_name || "questo profilo"} è</div>
+        <h2 class="cf-archetype-name">${result.archetype.name}</h2>
+      </div>
+      <p class="cf-hint" style="text-align:center;font-size:14px;line-height:1.6;margin-bottom:22px;">
+        Il resto è pronto: punti di forza e debolezza, coerenza con il tuo obiettivo, e l'accesso alla tua area personale.
+        Registrati per vederlo, è gratuito.
+      </p>
+      <input class="cf-input" id="cf-gate-name" type="text" placeholder="Il tuo nome" style="margin-bottom:10px;" />
+      <input class="cf-input" id="cf-gate-email" type="email" placeholder="La tua email" style="margin-bottom:6px;" />
+      <p style="font-size:11px;opacity:0.6;line-height:1.5;margin:10px 0 18px;">
+        Registrandoti accetti di ricevere l'analisi via email e di creare un account per la tua area personale.
+        Puoi chiedere la cancellazione dei tuoi dati in qualsiasi momento.
+      </p>
+      <div class="cf-nav" style="justify-content:flex-end;">
+        <button class="cf-btn cf-btn-primary" id="cf-gate-submit">Registrati e vedi il risultato →</button>
+      </div>
+      <div id="cf-gate-error" style="color:var(--wax);font-size:12px;margin-top:10px;text-align:right;"></div>
+    </div>`;
+
+    document.getElementById("cf-gate-submit").addEventListener("click", async () => {
+      const name = document.getElementById("cf-gate-name").value.trim();
+      const email = document.getElementById("cf-gate-email").value.trim();
+      const errEl = document.getElementById("cf-gate-error");
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!name || !emailOk) {
+        errEl.textContent = "Inserisci nome ed email valida.";
+        return;
+      }
+      const btn = document.getElementById("cf-gate-submit");
+      btn.disabled = true; btn.textContent = "Registrazione in corso...";
+
+      result.registered = true;
+      result.registrant = { name, email, registeredAt: new Date().toISOString() };
+
+      await saveProfile(currentEntityType, result);
+      if (currentEntityType === "individuo") individualProfile = result; else companyProfile = result;
+      currentProfile = result;
+
+      await sendEmail(EMAILJS_CONFIG.templateIdLead, {
+        from_name: name,
+        from_email: email,
+        entity_type: currentEntityType === "individuo" ? "Individuo" : "Azienda",
+        subject_name: a.company_name,
+        archetype: result.archetype.name,
+        goal: a.company_goal,
+        goal_fit: result.goalFit.verdict
+      });
+      await sendEmail(EMAILJS_CONFIG.templateIdConfirm, {
+        to_name: name,
+        to_email: email,
+        subject_name: a.company_name,
+        archetype: result.archetype.name
+      });
+
+      renderResult(result);
+    });
+  }
+
+  const PRODUCTS = [
+    { id:"onboarding", icon:"📋", name:"Kit di Benvenuto" },
+    { id:"evp", icon:"🤝", name:"Kit EVP" },
+    { id:"values", icon:"🧭", name:"Kit Valori" },
+    { id:"pvm", icon:"🎯", name:"Kit Purpose · Vision · Mission" }
+  ];
+
+  function verdictPillClass(v){
+    if (v === "good") return "cf-verdict-good";
+    if (v === "partial") return "cf-verdict-partial";
+    return "cf-verdict-bad";
+  }
+  function verdictLabel(v){
+    if (v === "good") return "Allineato";
+    if (v === "partial") return "Parzialmente allineato";
+    return "Da rivedere";
+  }
+
+  function renderResult(r){
+    activeTab = "tono";
+    renderProfileBar();
+    setPageHeader("Corporate Fables", "Il tono di voce", "La tua analisi salvata.");
+    const a = r.answers || answers;
+    let html = `<div class="cf-card cf-result">
+
+      <div class="cf-archetype-card">
+        <div class="cf-archetype-eyebrow">Il tono di ${a.company_name || "questa azienda"} è</div>
+        <h2 class="cf-archetype-name">${r.archetype.name}</h2>
+        <p class="cf-archetype-essence">${r.archetype.essence}</p>
+      </div>
+
+      <div class="cf-section">
+        <div class="cf-section-label">Punti di forza e di debolezza</div>
+        <div class="cf-sw-grid">`;
+    r.strengthsWeaknesses.forEach(sw => {
+      html += `<div class="cf-strength"><b>Forza</b>${sw.strength}</div>
+               <div class="cf-weakness"><b>Debolezza</b>${sw.weakness}</div>`;
+    });
+    html += `</div></div>
+
+      <div class="cf-section">
+        <div class="cf-section-label">Coerenza con l'obiettivo dichiarato</div>
+        <div class="cf-verdict">
+          <span class="cf-verdict-pill ${verdictPillClass(r.goalFit.verdict)}">${verdictLabel(r.goalFit.verdict)}</span>
+        </div>
+        <div class="cf-verdict-text">${r.goalFit.text}</div>
+    `;
+
+    if (r.hasSample) {
+      if (r.aiEnrichment) {
+        html += `<div class="cf-ai-box">
+          <span class="cf-ai-tag">Analisi del testo che hai incollato</span>
+          <div><b>Coerente con il tono dichiarato:</b> ${r.aiEnrichment.coerente || "n/d"}</div>
+          <div style="margin-top:6px;">${r.aiEnrichment.osservazione || ""}</div>
+          <div style="margin-top:6px;font-style:italic;">${r.aiEnrichment.consiglio || ""}</div>
+        </div>`;
+      } else {
+        html += `<div class="cf-ai-box">
+          <span class="cf-ai-tag">Analisi del testo</span>
+          L'arricchimento basato sul testo che hai incollato non è disponibile in questo momento: qui sopra trovi comunque l'analisi completa basata sul profilo che hai dichiarato.
+        </div>`;
+      }
+    }
+
+    const savedLabel = r.savedAt ? new Date(r.savedAt).toLocaleDateString("it-IT", { day:"numeric", month:"long", year:"numeric" }) : null;
+    const registrantName = r.registrant ? r.registrant.name : null;
+    r.purchases = r.purchases || {};
+    const ownedCount = PRODUCTS.filter(p => r.purchases[p.id]).length;
+
+    html += `</div>
+
+      <div class="cf-upsell">
+        <div class="cf-upsell-title">${registrantName ? `Bentornato, ${registrantName}.` : "Il tuo account è pronto."}</div>
+        <div class="cf-upsell-text">${ownedCount > 0 ? `Hai già ${ownedCount} kit sbloccati con questo profilo.` : "Da qui puoi sbloccare i kit costruiti su questo stesso profilo del tono."}</div>
+        <button class="cf-btn cf-btn-primary" id="cf-goto-kits" style="width:100%;">Vai a \u00abI miei kit\u00bb →</button>
+        <div class="cf-fine-print">${savedLabel ? `Profilo salvato il ${savedLabel}.` : ""}</div>
+      </div>
+
+      <div class="cf-restart-row">
+        <button class="cf-restart" id="cf-restart-edit">Modifica questo profilo</button>
+        <button class="cf-restart" id="cf-restart-new">Inizia un profilo nuovo</button>
+      </div>
+    </div>`;
+
+    app.innerHTML = html;
+    document.getElementById("cf-goto-kits").addEventListener("click", () => goToTab("kits"));
+    document.getElementById("cf-restart-edit").addEventListener("click", () => {
+      Object.assign(answers, a);
+      phase = "quiz"; step = 0; renderQuestion();
+    });
+    document.getElementById("cf-restart-new").addEventListener("click", () => {
+      if (!confirm("Il profilo salvato verrà sostituito alla prossima analisi completata. Continuare?")) return;
+      Object.keys(answers).forEach(k => delete answers[k]);
+      phase = "intro"; renderIntro();
+    });
+  }
+
+  function renderKitsTab(){
+    activeTab = "kits";
+    renderTabBar();
+    profileBar.innerHTML = "";
+    corridor.innerHTML = "";
+    setPageHeader("Corporate Fables", "I miei kit", "Ogni kit legge il profilo del tono già salvato: nessuna domanda da rifare.");
+
+    const profiles = [
+      { type:"azienda", label:"Azienda", profile: companyProfile },
+      { type:"individuo", label:"Individuo", profile: individualProfile }
+    ].filter(p => p.profile && p.profile.registered);
+
+    let html = `<div class="cf-card">`;
+    if (!profiles.length) {
+      html += `<p class="cf-hint">Non hai ancora un profilo del tono registrato. Completa prima l'analisi nella scheda \u00abTono di voce\u00bb.</p>
+        <div class="cf-nav" style="justify-content:flex-end;"><button class="cf-btn cf-btn-primary" id="cf-kits-goto-tono">Vai al tono di voce →</button></div>`;
+    } else {
+      profiles.forEach(({ type, label, profile }) => {
+        profile.purchases = profile.purchases || {};
+        html += `<div style="margin-bottom:26px;">
+          <div class="cf-section-label">${label} · ${profile.answers.company_name} (${profile.archetype.name})</div>
+          <div class="cf-sw-grid" style="grid-template-columns:1fr 1fr;" data-kits-for="${type}">`;
+        PRODUCTS.forEach(p => {
+          const owned = !!profile.purchases[p.id];
+          html += `<div class="cf-product-tile-light${owned ? ' owned' : ''}" data-id="${p.id}" data-type="${type}">
+            <div>${p.icon} ${p.name}</div>
+            <div class="cf-product-status-light">${owned ? '✓ Posseduto' : 'Sblocca (demo)'}</div>
+          </div>`;
+        });
+        html += `</div></div>`;
+      });
+      html += `<div class="cf-fine-print">Demo: cliccando su un kit ne simuli lo sblocco, senza un pagamento reale. Nella versione di produzione qui ci sarebbe un vero checkout, e i kit posseduti aprirebbero il rispettivo generatore.</div>`;
+    }
+    html += `</div>`;
+    app.innerHTML = html;
+
+    const gotoTono = document.getElementById("cf-kits-goto-tono");
+    if (gotoTono) gotoTono.addEventListener("click", () => goToTab("tono"));
+
+    document.querySelectorAll("[data-id][data-type]").forEach(tile => {
+      tile.addEventListener("click", async () => {
+        const id = tile.dataset.id;
+        const type = tile.dataset.type;
+        const profile = type === "individuo" ? individualProfile : companyProfile;
+        profile.purchases = profile.purchases || {};
+        profile.purchases[id] = !profile.purchases[id];
+        await saveProfile(type, profile);
+        if (type === "individuo") individualProfile = profile; else companyProfile = profile;
+        renderKitsTab();
+      });
+    });
+  }
+
+  function renderDashboard(){
+    activeTab = "dashboard";
+    renderTabBar();
+    profileBar.innerHTML = "";
+    corridor.innerHTML = "";
+    setPageHeader("Corporate Fables", "Dashboard", "Il riepilogo dei tuoi profili e dei tuoi kit.");
+
+    const profiles = [
+      { type:"azienda", icon:"🏰", label:"Azienda", profile: companyProfile },
+      { type:"individuo", icon:"🦊", label:"Individuo", profile: individualProfile }
+    ].filter(p => p.profile && p.profile.registered);
+
+    let html = `<div class="cf-card">`;
+    profiles.forEach(({ type, icon, label, profile }) => {
+      const owned = PRODUCTS.filter(p => profile.purchases && profile.purchases[p.id]).length;
+      html += `<div class="cf-archetype-card" style="margin-bottom:16px;cursor:pointer;" data-goto="${type}">
+        <div class="cf-archetype-eyebrow">${icon} ${label} · ${profile.answers.company_name}</div>
+        <h2 class="cf-archetype-name" style="font-size:22px;">${profile.archetype.name}</h2>
+        <p class="cf-archetype-essence">Coerenza con l'obiettivo: <span class="cf-verdict-pill ${verdictPillClass(profile.goalFit.verdict)}">${verdictLabel(profile.goalFit.verdict)}</span></p>
+        <p class="cf-archetype-essence" style="margin-top:8px;">${owned} kit sbloccati su ${PRODUCTS.length}</p>
+      </div>`;
+    });
+    if (!profiles.length) {
+      html += `<p class="cf-hint">Nessun profilo ancora. Comincia dalla scheda \u00abTono di voce\u00bb.</p>`;
+    } else {
+      html += `<div class="cf-nav" style="justify-content:center;"><button class="cf-btn cf-btn-ghost" id="cf-dash-goto-kits">Vai a tutti i kit →</button></div>`;
+    }
+    html += `</div>`;
+    app.innerHTML = html;
+
+    document.querySelectorAll("[data-goto]").forEach(card => {
+      card.addEventListener("click", () => {
+        currentEntityType = card.dataset.goto;
+        currentProfile = currentEntityType === "individuo" ? individualProfile : companyProfile;
+        renderResult(currentProfile);
+      });
+    });
+    const dashKits = document.getElementById("cf-dash-goto-kits");
+    if (dashKits) dashKits.addEventListener("click", () => goToTab("kits"));
+  }
+
+  function renderAccountTab(){
+    activeTab = "account";
+    renderTabBar();
+    profileBar.innerHTML = "";
+    corridor.innerHTML = "";
+    setPageHeader("Corporate Fables", "Account", "I tuoi dati e le impostazioni sulla privacy.");
+
+    const registrant = (individualProfile && individualProfile.registrant) || (companyProfile && companyProfile.registrant) || null;
+
+    let html = `<div class="cf-card">`;
+    if (registrant) {
+      html += `<div class="cf-section">
+        <div class="cf-section-label">I tuoi dati</div>
+        <p class="cf-hint" style="font-size:14px;">Nome: <b>${registrant.name}</b><br/>Email: <b>${registrant.email}</b></p>
+      </div>`;
+    }
+    html += `<div class="cf-section">
+        <div class="cf-section-label">Privacy</div>
+        <p class="cf-hint" style="font-size:13px;line-height:1.6;">I tuoi dati sono usati solo per salvare i profili del tono e comunicarti i kit sbloccati. Puoi richiederne la cancellazione in qualsiasi momento.</p>
+        <div class="cf-nav" style="justify-content:flex-start;gap:12px;">
+          <button class="cf-btn cf-btn-ghost" id="cf-delete-all">Cancella tutti i miei dati</button>
+        </div>
+      </div>
+      <div class="cf-fine-print">Prototipo: i dati vivono nello storage del tuo account Claude. Nella versione di produzione risiederebbero in un database vostro (es. Supabase), con un vero login.</div>
+    </div>`;
+    app.innerHTML = html;
+
+    document.getElementById("cf-delete-all").addEventListener("click", async () => {
+      if (!confirm("Cancellare entrambi i profili e tutti i dati salvati? Non è recuperabile.")) return;
+      await deleteProfile("azienda");
+      await deleteProfile("individuo");
+      companyProfile = null; individualProfile = null; currentProfile = null;
+      Object.keys(answers).forEach(k => delete answers[k]);
+      activeTab = "tono";
+      renderHub();
+    });
+  }
+
+  async function init(){
+    companyProfile = await loadProfile("azienda");
+    individualProfile = await loadProfile("individuo");
+    if (anyRegistered()) {
+      goToTab("dashboard");
+    } else {
+      renderHub();
+    }
+  }
+
+  init();
+})();
+</script>
